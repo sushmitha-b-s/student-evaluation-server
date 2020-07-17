@@ -3,6 +3,7 @@ const app = express()
 const dotenv = require('dotenv')
 dotenv.config()
 const db = require('./db')
+const teacherModel = require('./teachers/model')
 
 const port = process.env.PORT
 
