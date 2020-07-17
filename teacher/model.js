@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 const db = require('../db')
 
-const Teachers = db.define('teacher', {
+const Teacher = db.define('teacher', {
     fullname: {
         type: Sequelize.STRING
     },
@@ -13,4 +13,4 @@ const Teachers = db.define('teacher', {
     }
 })
 
-module.exports = Teachers
+module.exports = Teacher
