@@ -6,9 +6,9 @@ const { registerValidation, loginValidation } = require('./validations')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 
-router.post('/register', async (req, res, next) => {
+router.post('/register', async (req, res) => {
     const { error } = await registerValidation(req.body)
-    if (error) return res.status(400).send(error.details[0].message)
+    if (error) return res.status(400).send({ message: error.details[0].message })
 
     const emailExists = await Teacher.findOne({
         where: {
@@ -31,14 +31,16 @@ router.post('/register', async (req, res, next) => {
 
         res.status(201).send(newTeacher)
     } catch (err) {
-        next(err)
+        res.status(400).send({
+            message: err
+        })
     }
 
 })
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', async (req, res) => {
     const { error } = await loginValidation(req.body)
-    if (error) return res.status(400).send(error.details[0].message)
+    if (error) return res.status(400).send({ message: error.details[0].message })
 
     const teacher = await Teacher.findOne({
         where: {
@@ -46,11 +48,11 @@ router.post('/login', async (req, res, next) => {
         }
     })
 
-    if (!teacher) return res.status(400).send('Invalid email')
+    if (!teacher) return res.status(400).send({ message: 'Invalid email' })
 
     const verifyPassword = await bcrypt.compare(req.body.password, teacher.password)
 
-    if (!verifyPassword) return res.status(400).send('Invalid password')
+    if (!verifyPassword) return res.status(400).send({ message: 'Invalid password' })
 
     try {
         const { id, fullname, email } = teacher
@@ -63,7 +65,9 @@ router.post('/login', async (req, res, next) => {
             token
         })
     } catch (err) {
-        next(err)
+        res.status(400).send({
+            message: err
+        })
     }
 })
 
