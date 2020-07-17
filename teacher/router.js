@@ -4,6 +4,7 @@ const router = new Router()
 const Teacher = require('./model')
 const { registerValidation, loginValidation } = require('./validations')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken');
 
 router.post('/register', async (req, res, next) => {
     const { error } = await registerValidation(req.body)
@@ -52,7 +53,14 @@ router.post('/login', async (req, res, next) => {
     if (!verifyPassword) return res.status(400).send('Invalid password')
 
     try {
-        res.send('success')
+        const { fullname, email } = teacher
+        const token = await jwt.sign({ fullname, email }, process.env.TOKEN_SECRET)
+
+        res.header('auth-token', token).send({
+            fullname,
+            email,
+            token
+        })
     } catch (err) {
         next(err)
     }
