@@ -53,10 +53,11 @@ router.post('/login', async (req, res, next) => {
     if (!verifyPassword) return res.status(400).send('Invalid password')
 
     try {
-        const { fullname, email } = teacher
-        const token = await jwt.sign({ fullname, email }, process.env.TOKEN_SECRET)
+        const { id, fullname, email } = teacher
+        const token = await jwt.sign({ id, fullname, email }, process.env.TOKEN_SECRET)
 
         res.header('auth-token', token).send({
+            id,
             fullname,
             email,
             token
