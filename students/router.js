@@ -19,7 +19,7 @@ router.post('/classes/:classId/students', async (req, res) => {
         res.status(201).json(newStudent)
     } catch (err) {
         res.status(400).send({
-            message: err.errors[0].message
+            message: err
         })
     }
 })
@@ -40,7 +40,7 @@ router.get('/classes/:classId/students', async (req, res) => {
         res.status(200).json(students)
     } catch (err) {
         res.status(400).send({
-            message: err.errors[0].message
+            message: err
         })
     }
 })
@@ -61,7 +61,7 @@ router.put('/classes/:classId/students/:studentId', async (req, res) => {
         res.status(200).json(updatedStudent)
     } catch (err) {
         res.status(400).send({
-            message: err.errors[0].message
+            message: err
         })
     }
 })
@@ -82,7 +82,7 @@ router.delete('/classes/:classId/students/:studentId', async (req, res) => {
         res.status(200).json({ id: req.params.studentId })
     } catch (err) {
         res.status(400).send({
-            message: err.errors[0].message
+            message: err
         })
     }
 })
