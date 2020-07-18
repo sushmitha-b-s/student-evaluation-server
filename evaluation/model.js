@@ -17,7 +17,7 @@ const Evaluation = db.define('evaluation', {
 
 }, { timestamps: false })
 
-Evaluation.belongsTo(Students)
-Students.hasMany(Evaluation)
+Evaluation.belongsTo(Students, { onDelete: 'cascade' })
+Students.hasMany(Evaluation, { onDelete: 'cascade' })
 
 module.exports = Evaluation

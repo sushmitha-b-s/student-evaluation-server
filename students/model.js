@@ -35,7 +35,7 @@ const Students = db.define('student', {
     }
 }, { timestamps: false })
 
-Students.belongsTo(Class)
-Class.hasMany(Students)
+Students.belongsTo(Class, { onDelete: 'cascade' })
+Class.hasMany(Students, { onDelete: 'cascade' })
 
 module.exports = Students
