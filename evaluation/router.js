@@ -13,12 +13,12 @@ router.post('/students/:studentId/evaluations', async (req, res) => {
     })
 
     try {
-        const newRemark = await Evaluation.create({
+        const newEvaluation = await Evaluation.create({
             ...req.body,
             studentId: req.params.studentId
         })
 
-        res.status(201).json(newRemark)
+        res.status(201).json(newEvaluation)
     } catch (err) {
         res.status(400).send({
             message: err
@@ -27,11 +27,11 @@ router.post('/students/:studentId/evaluations', async (req, res) => {
 })
 
 //edit an evaluation for a specific student
-router.put('/students/:studentId/evaluations/:evaluationId', async (req, res) => {
+router.put('/evaluations/:evaluationId', async (req, res) => {
     const existingEvaluation = await Evaluation.findOne({
         where: {
-            id: req.params.evaluationId,
-            studentId: req.params.studentId
+            id: req.params.evaluationId
+            // studentId: req.params.studentId
         }
     })
     if (!existingEvaluation) return res.status(400).send({ message: 'The evaluation not found' })
@@ -47,11 +47,11 @@ router.put('/students/:studentId/evaluations/:evaluationId', async (req, res) =>
 })
 
 //delete an evaluation of a specific student
-router.delete('/students/:studentId/evaluations/:evaluationId', async (req, res) => {
+router.delete('/evaluations/:evaluationId', async (req, res) => {
     const evaluation = await Evaluation.findOne({
         where: {
-            id: req.params.evaluationId,
-            studentId: req.params.studentId
+            id: req.params.evaluationId
+            // studentId: req.params.studentId
         }
     })
 
@@ -59,8 +59,8 @@ router.delete('/students/:studentId/evaluations/:evaluationId', async (req, res)
     try {
         await Evaluation.destroy({
             where: {
-                id: req.params.evaluationId,
-                studentId: req.params.studentId
+                id: req.params.evaluationId
+                // studentId: req.params.studentId
             }
         })
 

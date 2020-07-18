@@ -3,6 +3,7 @@ const { Router } = express
 const router = new Router()
 const Classes = require('./model')
 const auth = require('../authMiddleware')
+const Student = require('../students/model')
 
 //add new class
 router.post('/classes', auth, async (req, res) => {
@@ -20,9 +21,11 @@ router.post('/classes', auth, async (req, res) => {
 //get all classes
 router.get('/classes', auth, async (req, res) => {
     try {
-        const classes = await Classes.findAll()
+        const classes = await Classes.findAll({
+            include: [Student]
+        })
 
-        res.status(200).json(classes)
+        res.status(200).json({ classes })
     } catch (err) {
         res.status(400).send({
             message: err

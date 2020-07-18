@@ -40,7 +40,7 @@ router.get('/classes/:classId/students', async (req, res) => {
             }
         })
 
-        res.status(200).json(students)
+        res.status(200).json({ students })
     } catch (err) {
         res.status(400).send({
             message: err
@@ -72,11 +72,10 @@ router.get('/students/:studentId', async (req, res) => {
 })
 
 //edit a student of a specific class
-router.put('/classes/:classId/students/:studentId', async (req, res) => {
+router.put('/students/:studentId', async (req, res) => {
     const existingStudent = await Students.findOne({
         where: {
-            id: req.params.studentId,
-            classId: req.params.classId
+            id: req.params.studentId
         }
     })
     if (!existingStudent) return res.status(400).send({
@@ -94,11 +93,10 @@ router.put('/classes/:classId/students/:studentId', async (req, res) => {
 })
 
 //delete a student of a specific class
-router.delete('/classes/:classId/students/:studentId', async (req, res) => {
+router.delete('/students/:studentId', async (req, res) => {
     const student = await Students.findOne({
         where: {
-            id: req.params.studentId,
-            classId: req.params.classId
+            id: req.params.studentId
         }
     })
 
@@ -107,8 +105,7 @@ router.delete('/classes/:classId/students/:studentId', async (req, res) => {
     try {
         await Students.destroy({
             where: {
-                id: req.params.studentId,
-                classId: req.params.classId
+                id: req.params.studentId
             }
         })
 
