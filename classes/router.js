@@ -3,19 +3,15 @@ const { Router } = express
 const router = new Router()
 const Classes = require('./model')
 const auth = require('../authMiddleware')
-const { classValidation } = require('./validations')
 
 router.post('/classes', auth, async (req, res) => {
-    const { error } = await classValidation(req.body)
-    if (error) return res.status(400).send({ message: error.details[0].message })
-
     try {
         const newClass = await Classes.create(req.body)
 
         res.status(201).json(newClass)
     } catch (err) {
         res.status(400).send({
-            message: err.errors[0].message
+            message: err
         })
     }
 })

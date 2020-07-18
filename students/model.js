@@ -10,23 +10,28 @@ const Students = db.define('student', {
     },
     profilePic: {
         type: Sequelize.TEXT,
-        allowNull: false
+        allowNull: false,
+        required: true
     },
     address: {
         type: Sequelize.TEXT,
-        allowNull: false
+        allowNull: false,
+        required: true
     },
     zipcode: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        required: true
     },
     city: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        required: true
     },
     country: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        required: true
     }
 }, { timestamps: false })
 
