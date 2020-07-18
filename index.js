@@ -10,6 +10,7 @@ const bodyParser = require('body-parser')
 const teacherRouter = require('./teacher/router')
 const classRouter = require('./classes/router')
 const studentRouter = require('./students/router')
+const evaluationRouter = require('./evaluation/router')
 
 //middlewares
 app.use(cors())
@@ -19,6 +20,7 @@ app.use(bodyParser.json())
 app.use(teacherRouter)
 app.use(classRouter)
 app.use(studentRouter)
+app.use(evaluationRouter)
 
 const port = process.env.PORT
 app.listen(port, () => console.log('Server up and running'))

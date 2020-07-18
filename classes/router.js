@@ -3,7 +3,9 @@ const { Router } = express
 const router = new Router()
 const Classes = require('./model')
 const auth = require('../authMiddleware')
+const Student = require('../students/model')
 
+//add new class
 router.post('/classes', auth, async (req, res) => {
     try {
         const newClass = await Classes.create(req.body)
@@ -16,11 +18,14 @@ router.post('/classes', auth, async (req, res) => {
     }
 })
 
+//get all classes
 router.get('/classes', auth, async (req, res) => {
     try {
-        const classes = await Classes.findAll()
+        const classes = await Classes.findAll({
+            include: [Student]
+        })
 
-        res.status(200).json(classes)
+        res.status(200).json({ classes })
     } catch (err) {
         res.status(400).send({
             message: err
@@ -28,16 +33,21 @@ router.get('/classes', auth, async (req, res) => {
     }
 })
 
+//delete a class
 router.delete('/classes/:classId', auth, async (req, res) => {
+    const classToDelete = await Classes.findOne({
+        where: {
+            id: req.params.classId
+        }
+    })
+
+    if (!classToDelete) return res.status(400).send({ message: 'The class not found' })
+
     try {
-        const deletedClass = await Classes.destroy({
+        await Classes.destroy({
             where: {
                 id: req.params.classId
             }
-        })
-
-        if (!deletedClass) return res.status(404).json({
-            message: `The class with id ${req.params.classId} is not found`
         })
 
         res.status(200).json({ id: parseInt(req.params.classId) })

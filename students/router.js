@@ -3,7 +3,9 @@ const { Router } = express
 const router = new Router()
 const Students = require('./model')
 const Class = require('../classes/model')
+const Evaluation = require('../evaluation/model')
 
+//add new student in a specific class
 router.post('/classes/:classId/students', async (req, res) => {
     const existingClass = await Class.findByPk(req.params.classId)
     if (!existingClass) return res.status(400).send({
@@ -24,6 +26,7 @@ router.post('/classes/:classId/students', async (req, res) => {
     }
 })
 
+//get all students of a specific class
 router.get('/classes/:classId/students', async (req, res) => {
     const existingClass = await Class.findByPk(req.params.classId)
     if (!existingClass) return res.status(400).send({
@@ -37,7 +40,7 @@ router.get('/classes/:classId/students', async (req, res) => {
             }
         })
 
-        res.status(200).json(students)
+        res.status(200).json({ students })
     } catch (err) {
         res.status(400).send({
             message: err
@@ -45,11 +48,34 @@ router.get('/classes/:classId/students', async (req, res) => {
     }
 })
 
-router.put('/classes/:classId/students/:studentId', async (req, res) => {
+//get a single student with all evaluations and his/her class details
+router.get('/students/:studentId', async (req, res) => {
+    try {
+        const student = await Students.findOne({
+            where: {
+                id: req.params.studentId
+            },
+            include: [{ model: Evaluation }, { model: Class }],
+            order: [
+                [Evaluation, 'date', 'DESC']
+            ]
+        })
+
+        if (!student) return res.status(404).send({ message: 'The student is not found ' })
+
+        res.status(200).json({ student })
+    } catch (err) {
+        res.status(400).send({
+            message: err
+        })
+    }
+})
+
+//edit a student of a specific class
+router.put('/students/:studentId', async (req, res) => {
     const existingStudent = await Students.findOne({
         where: {
-            id: req.params.studentId,
-            classId: req.params.classId
+            id: req.params.studentId
         }
     })
     if (!existingStudent) return res.status(400).send({
@@ -66,20 +92,24 @@ router.put('/classes/:classId/students/:studentId', async (req, res) => {
     }
 })
 
-router.delete('/classes/:classId/students/:studentId', async (req, res) => {
+//delete a student of a specific class
+router.delete('/students/:studentId', async (req, res) => {
+    const student = await Students.findOne({
+        where: {
+            id: req.params.studentId
+        }
+    })
+
+    if (!student) return res.status(400).send({ message: 'The student not found' })
+
     try {
-        const deletedStudent = await Students.destroy({
+        await Students.destroy({
             where: {
-                id: req.params.studentId,
-                classId: req.params.classId
+                id: req.params.studentId
             }
         })
 
-        if (!deletedStudent) return res.status(404).send({
-            message: 'The student is not found'
-        })
-
-        res.status(200).json({ id: req.params.studentId })
+        res.status(200).json({ id: parseInt(req.params.studentId) })
     } catch (err) {
         res.status(400).send({
             message: err
