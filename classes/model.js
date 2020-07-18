@@ -3,8 +3,7 @@ const db = require('../db')
 
 const Classes = db.define('class', {
     batchNo: {
-        type: Sequelize.INTEGER,
-        unique: true
+        type: Sequelize.INTEGER
     },
     startDate: {
         type: Sequelize.STRING //DD-MM-YYYY
@@ -12,6 +11,6 @@ const Classes = db.define('class', {
     endDate: {
         type: Sequelize.STRING //DD-MM-YYYY
     }
-})
+}, { timestamps: false })
 
 module.exports = Classes
