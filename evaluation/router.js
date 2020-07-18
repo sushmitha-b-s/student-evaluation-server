@@ -4,12 +4,7 @@ const router = new Router()
 const Evaluation = require('./model')
 const Student = require('../students/model')
 
-//post a remark (receive studentId, and post remark)
-//get a student with his details and his/her remarks (single or multiple)
-//delete a remark (find student based on his id, and delete remark by its id.)
-//edit a remark (find remark using student id and remark id, edit it and send back the remark.)
-
-//post a remark for a specific student
+//post an evaluation for a specific student
 router.post('/students/:studentId/evaluations', async (req, res) => {
     const existingStudent = await Student.findByPk(req.params.studentId)
 
@@ -31,6 +26,7 @@ router.post('/students/:studentId/evaluations', async (req, res) => {
     }
 })
 
+//edit an evaluation for a specific student
 router.put('/students/:studentId/evaluations/:evaluationId', async (req, res) => {
     const existingEvaluation = await Evaluation.findOne({
         where: {
@@ -50,6 +46,7 @@ router.put('/students/:studentId/evaluations/:evaluationId', async (req, res) =>
     }
 })
 
+//delete an evaluation of a specific student
 router.delete('/students/:studentId/evaluations/:evaluationId', async (req, res) => {
     const evaluation = await Evaluation.findOne({
         where: {

@@ -4,6 +4,7 @@ const router = new Router()
 const Classes = require('./model')
 const auth = require('../authMiddleware')
 
+//add new class
 router.post('/classes', auth, async (req, res) => {
     try {
         const newClass = await Classes.create(req.body)
@@ -16,6 +17,7 @@ router.post('/classes', auth, async (req, res) => {
     }
 })
 
+//get all classes
 router.get('/classes', auth, async (req, res) => {
     try {
         const classes = await Classes.findAll()
@@ -28,6 +30,7 @@ router.get('/classes', auth, async (req, res) => {
     }
 })
 
+//delete a class
 router.delete('/classes/:classId', auth, async (req, res) => {
     const classToDelete = await Classes.findOne({
         where: {
