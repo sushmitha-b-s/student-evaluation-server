@@ -67,19 +67,24 @@ router.put('/classes/:classId/students/:studentId', async (req, res) => {
 })
 
 router.delete('/classes/:classId/students/:studentId', async (req, res) => {
+    const student = await Students.findOne({
+        where: {
+            id: req.params.studentId,
+            classId: req.params.classId
+        }
+    })
+
+    if (!student) return res.status(400).send({ message: 'The student not found' })
+
     try {
-        const deletedStudent = await Students.destroy({
+        await Students.destroy({
             where: {
                 id: req.params.studentId,
                 classId: req.params.classId
             }
         })
 
-        if (!deletedStudent) return res.status(404).send({
-            message: 'The student is not found'
-        })
-
-        res.status(200).json({ id: req.params.studentId })
+        res.status(200).json({ id: parseInt(req.params.studentId) })
     } catch (err) {
         res.status(400).send({
             message: err

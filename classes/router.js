@@ -29,15 +29,19 @@ router.get('/classes', auth, async (req, res) => {
 })
 
 router.delete('/classes/:classId', auth, async (req, res) => {
+    const classToDelete = await Classes.findOne({
+        where: {
+            id: req.params.classId
+        }
+    })
+
+    if (!classToDelete) return res.status(400).send({ message: 'The class not found' })
+
     try {
-        const deletedClass = await Classes.destroy({
+        await Classes.destroy({
             where: {
                 id: req.params.classId
             }
-        })
-
-        if (!deletedClass) return res.status(404).json({
-            message: `The class with id ${req.params.classId} is not found`
         })
 
         res.status(200).json({ id: parseInt(req.params.classId) })
