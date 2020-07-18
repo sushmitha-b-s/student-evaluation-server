@@ -3,6 +3,7 @@ const { Router } = express
 const router = new Router()
 const Students = require('./model')
 const Class = require('../classes/model')
+const Evaluation = require('../evaluation/model')
 
 router.post('/classes/:classId/students', async (req, res) => {
     const existingClass = await Class.findByPk(req.params.classId)
@@ -38,6 +39,26 @@ router.get('/classes/:classId/students', async (req, res) => {
         })
 
         res.status(200).json(students)
+    } catch (err) {
+        res.status(400).send({
+            message: err
+        })
+    }
+})
+
+//get student with all evaluations and his/her class details
+router.get('/students/:studentId', async (req, res) => {
+    try {
+        const student = await Students.findOne({
+            where: {
+                id: req.params.studentId
+            },
+            include: [{ model: Evaluation }, { model: Class }]
+        })
+
+        if (!student) return res.status(404).send({ message: 'The student is not found ' })
+
+        res.status(200).json({ student })
     } catch (err) {
         res.status(400).send({
             message: err
