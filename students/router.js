@@ -26,7 +26,7 @@ router.post('/classes/:classId/students', async (req, res) => {
     }
 })
 
-//get all students of a specific class
+//get all students(with their last color code) of a specific class
 router.get('/classes/:classId/students', async (req, res) => {
     const existingClass = await Class.findByPk(req.params.classId)
     if (!existingClass) return res.status(400).send({
@@ -37,7 +37,14 @@ router.get('/classes/:classId/students', async (req, res) => {
         const students = await Students.findAll({
             where: {
                 classId: req.params.classId
-            }
+            },
+            include: [
+                {
+                    model: Evaluation,
+                    limit: 1,
+                    order: [['date', 'DESC']]
+                }
+            ]
         })
 
         res.status(200).json({ students })
@@ -110,6 +117,43 @@ router.delete('/students/:studentId', async (req, res) => {
         })
 
         res.status(200).json({ id: parseInt(req.params.studentId) })
+    } catch (err) {
+        res.status(400).send({
+            message: err
+        })
+    }
+})
+
+//calculate percentage of last evaluations of all students - progress bar
+router.get('/progressbar/:classId', async (req, res) => {
+    const existingClass = await Class.findByPk(req.params.classId)
+    if (!existingClass) return res.status(400).send({
+        message: 'The class is not found'
+    })
+    try {
+        const students = await Students.findAll({
+            where: {
+                classId: req.params.classId
+            },
+            include: [
+                {
+                    model: Evaluation,
+                    limit: 1,
+                    order: [['date', 'DESC']]
+                }
+            ]
+        })
+
+        const total = students.length //total students in thai class
+        const studentsWithRed = students.filter(student => student.evaluations[0].colorcode === 'red').length
+        const studentsWithYellow = students.filter(student => student.evaluations[0].colorcode === 'yellow').length
+        const studentsWithGreen = students.filter(student => student.evaluations[0].colorcode === 'green').length
+
+        res.status(200).send({
+            redPercentage: ((studentsWithRed / total) * 100).toFixed(2),
+            yellowPercentage: ((studentsWithYellow / total) * 100).toFixed(2),
+            greenPercentage: ((studentsWithGreen / total) * 100).toFixed(2)
+        })
     } catch (err) {
         res.status(400).send({
             message: err
