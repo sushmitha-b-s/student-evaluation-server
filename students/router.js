@@ -26,7 +26,7 @@ router.post('/classes/:classId/students', async (req, res) => {
     }
 })
 
-//get all students of a specific class
+//get all students(with their last color code) of a specific class
 router.get('/classes/:classId/students', async (req, res) => {
     const existingClass = await Class.findByPk(req.params.classId)
     if (!existingClass) return res.status(400).send({
@@ -37,7 +37,14 @@ router.get('/classes/:classId/students', async (req, res) => {
         const students = await Students.findAll({
             where: {
                 classId: req.params.classId
-            }
+            },
+            include: [
+                {
+                    model: Evaluation,
+                    limit: 1,
+                    order: [['date', 'DESC']]
+                }
+            ]
         })
 
         res.status(200).json({ students })
