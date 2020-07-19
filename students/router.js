@@ -124,7 +124,7 @@ router.delete('/students/:studentId', async (req, res) => {
     }
 })
 
-//calculate percentage of last evaluations of all students - progress bar
+//calculate percentage of last evaluations of all students in a class - progress bar
 router.get('/progressbar/:classId', async (req, res) => {
     const existingClass = await Class.findByPk(req.params.classId)
     if (!existingClass) return res.status(400).send({
@@ -153,6 +153,56 @@ router.get('/progressbar/:classId', async (req, res) => {
             redPercentage: ((studentsWithRed / total) * 100).toFixed(2),
             yellowPercentage: ((studentsWithYellow / total) * 100).toFixed(2),
             greenPercentage: ((studentsWithGreen / total) * 100).toFixed(2)
+        })
+    } catch (err) {
+        res.status(400).send({
+            message: err
+        })
+    }
+})
+
+//secret algorithm which picks a student randomly from a class based on their latest performance (colorcode).
+//50% time - picks student who got 'red' as their latest colorcode.
+//33% time - picks student who got 'yellow' as their latest colorcode.
+//17% time - picks student who got 'green' as their latest colorcode.
+
+router.get('/algorithm/:classId', async (req, res) => {
+    const existingClass = await Class.findByPk(req.params.classId)
+    if (!existingClass) return res.status(400).send({
+        message: 'The class is not found'
+    })
+
+    try {
+        const students = await Students.findAll({
+            where: {
+                classId: req.params.classId
+            },
+            include: [
+                {
+                    model: Evaluation,
+                    limit: 1,
+                    order: [['date', 'DESC']]
+                }
+            ]
+        })
+
+
+        const randomNumber = parseFloat((Math.random() * 100).toFixed(2))
+        let randomColor
+
+        if (randomNumber >= 50) {
+            randomColor = 'red'
+        } else if (randomNumber < 50 && randomNumber >= 17) {
+            randomColor = 'yellow'
+        } else {
+            randomColor = 'green'
+        }
+
+        const randomStudent = students.find(stud => stud.evaluations.find(eval => eval.colorcode === randomColor))
+
+        res.json({
+            randomNumber,
+            randomStudent
         })
     } catch (err) {
         res.status(400).send({
