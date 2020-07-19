@@ -196,7 +196,7 @@ router.get('/algorithm/:classId', async (req, res) => {
         const randomStudent = students.find(stud => stud.evaluations.find(eval => eval.colorcode === randomColor))
 
         res.json({
-            randomno: randomNumber,
+            randomNumber,
             randomStudent
         })
     } catch (err) {
