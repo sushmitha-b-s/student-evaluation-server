@@ -161,4 +161,49 @@ router.get('/progressbar/:classId', async (req, res) => {
     }
 })
 
+router.get('/algorithm/:classId', async (req, res) => {
+    const existingClass = await Class.findByPk(req.params.classId)
+    if (!existingClass) return res.status(400).send({
+        message: 'The class is not found'
+    })
+
+    try {
+        const students = await Students.findAll({
+            where: {
+                classId: req.params.classId
+            },
+            include: [
+                {
+                    model: Evaluation,
+                    limit: 1,
+                    order: [['date', 'DESC']]
+                }
+            ]
+        })
+
+
+        const randomNumber = parseFloat((Math.random() * 100).toFixed(2))
+        let randomColor
+
+        if (randomNumber >= 50) {
+            randomColor = 'red'
+        } else if (randomNumber < 50 && randomNumber >= 17) {
+            randomColor = 'yellow'
+        } else {
+            randomColor = 'green'
+        }
+
+        const randomStudent = students.find(stud => stud.evaluations.find(eval => eval.colorcode === randomColor))
+
+        res.json({
+            randomno: randomNumber,
+            randomStudent
+        })
+    } catch (err) {
+        res.status(400).send({
+            message: err
+        })
+    }
+})
+
 module.exports = router
