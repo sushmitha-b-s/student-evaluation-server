@@ -4,9 +4,10 @@ const router = new Router()
 const Students = require('./model')
 const Class = require('../classes/model')
 const Evaluation = require('../evaluation/model')
+const auth = require('../authMiddleware')
 
 //add new student in a specific class
-router.post('/classes/:classId/students', async (req, res) => {
+router.post('/classes/:classId/students', auth, async (req, res) => {
     const existingClass = await Class.findByPk(req.params.classId)
     if (!existingClass) return res.status(400).send({
         message: `The class with id ${req.params.classId} is not found`
@@ -27,7 +28,7 @@ router.post('/classes/:classId/students', async (req, res) => {
 })
 
 //get all students(with their last color code) of a specific class
-router.get('/classes/:classId/students', async (req, res) => {
+router.get('/classes/:classId/students', auth, async (req, res) => {
     const existingClass = await Class.findByPk(req.params.classId)
     if (!existingClass) return res.status(400).send({
         message: 'The class is not found'
@@ -56,7 +57,7 @@ router.get('/classes/:classId/students', async (req, res) => {
 })
 
 //get a single student with all evaluations and his/her class details
-router.get('/students/:studentId', async (req, res) => {
+router.get('/students/:studentId', auth, async (req, res) => {
     try {
         const student = await Students.findOne({
             where: {
@@ -79,7 +80,7 @@ router.get('/students/:studentId', async (req, res) => {
 })
 
 //edit a student of a specific class
-router.put('/students/:studentId', async (req, res) => {
+router.put('/students/:studentId', auth, async (req, res) => {
     const existingStudent = await Students.findOne({
         where: {
             id: req.params.studentId
@@ -100,7 +101,7 @@ router.put('/students/:studentId', async (req, res) => {
 })
 
 //delete a student of a specific class
-router.delete('/students/:studentId', async (req, res) => {
+router.delete('/students/:studentId', auth, async (req, res) => {
     const student = await Students.findOne({
         where: {
             id: req.params.studentId
@@ -125,7 +126,7 @@ router.delete('/students/:studentId', async (req, res) => {
 })
 
 //calculate percentage of last evaluations of all students in a class - progress bar
-router.get('/progressbar/:classId', async (req, res) => {
+router.get('/progressbar/:classId', auth, async (req, res) => {
     const existingClass = await Class.findByPk(req.params.classId)
     if (!existingClass) return res.status(400).send({
         message: 'The class is not found'
@@ -166,7 +167,7 @@ router.get('/progressbar/:classId', async (req, res) => {
 //33% time - picks student who got 'yellow' as their latest colorcode.
 //17% time - picks student who got 'green' as their latest colorcode.
 
-router.get('/algorithm/:classId', async (req, res) => {
+router.get('/algorithm/:classId', auth, async (req, res) => {
     const existingClass = await Class.findByPk(req.params.classId)
     if (!existingClass) return res.status(400).send({
         message: 'The class is not found'
@@ -185,7 +186,6 @@ router.get('/algorithm/:classId', async (req, res) => {
                 }
             ]
         })
-
 
         const randomNumber = parseFloat((Math.random() * 100).toFixed(2))
         let randomColor
