@@ -3,9 +3,10 @@ const { Router } = express
 const router = new Router()
 const Evaluation = require('./model')
 const Student = require('../students/model')
+const auth = require('../authMiddleware')
 
 //post an evaluation for a specific student
-router.post('/students/:studentId/evaluations', async (req, res) => {
+router.post('/students/:studentId/evaluations', auth, async (req, res) => {
     const existingStudent = await Student.findByPk(req.params.studentId)
 
     if (!existingStudent) return res.status(400).send({
@@ -27,7 +28,7 @@ router.post('/students/:studentId/evaluations', async (req, res) => {
 })
 
 //edit an evaluation for a specific student
-router.put('/evaluations/:evaluationId', async (req, res) => {
+router.put('/evaluations/:evaluationId', auth, async (req, res) => {
     const existingEvaluation = await Evaluation.findOne({
         where: {
             id: req.params.evaluationId
@@ -47,7 +48,7 @@ router.put('/evaluations/:evaluationId', async (req, res) => {
 })
 
 //delete an evaluation of a specific student
-router.delete('/evaluations/:evaluationId', async (req, res) => {
+router.delete('/evaluations/:evaluationId', auth, async (req, res) => {
     const evaluation = await Evaluation.findOne({
         where: {
             id: req.params.evaluationId
