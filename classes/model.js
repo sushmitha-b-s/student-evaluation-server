@@ -17,6 +17,6 @@ const Classes = db.define('class', {
         allowNull: false,
         required: true
     }
-}, { timestamps: false })
+})
 
 module.exports = Classes

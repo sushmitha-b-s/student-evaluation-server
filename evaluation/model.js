@@ -15,7 +15,7 @@ const Evaluation = db.define('evaluation', {
         type: Sequelize.TEXT
     }
 
-}, { timestamps: false })
+})
 
 Evaluation.belongsTo(Students, { onDelete: 'cascade' })
 Students.hasMany(Evaluation, { onDelete: 'cascade' })

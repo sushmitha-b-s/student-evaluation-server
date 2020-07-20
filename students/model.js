@@ -33,7 +33,7 @@ const Students = db.define('student', {
         allowNull: false,
         required: true
     }
-}, { timestamps: false })
+})
 
 Students.belongsTo(Class, { onDelete: 'cascade' })
 Class.hasMany(Students, { onDelete: 'cascade' })
