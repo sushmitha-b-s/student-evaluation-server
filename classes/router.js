@@ -22,6 +22,7 @@ router.post('/classes', auth, async (req, res) => {
 router.get('/classes', auth, async (req, res) => {
     try {
         const classes = await Classes.findAll({
+            order: [['createdAt', 'ASC']],
             include: [Student]
         })
 

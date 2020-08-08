@@ -19,7 +19,17 @@ router.post('/classes/:classId/students', auth, async (req, res) => {
             classId: req.params.classId
         })
 
-        res.status(201).json(newStudent)
+        const updatedStudent = await Students.findByPk(newStudent.id, {
+            include: [
+                {
+                    model: Evaluation,
+                    limit: 1,
+                    order: [['date', 'DESC']]
+                }
+            ]
+        })
+
+        res.status(201).json(updatedStudent)
     } catch (err) {
         res.status(400).send({
             message: err
@@ -91,7 +101,17 @@ router.put('/students/:studentId', auth, async (req, res) => {
     })
 
     try {
-        const updatedStudent = await existingStudent.update(req.body)
+        const updateStudent = await existingStudent.update(req.body)
+
+        const updatedStudent = await Students.findByPk(updateStudent.id, {
+            include: [
+                {
+                    model: Evaluation,
+                    limit: 1,
+                    order: [['date', 'DESC']]
+                }
+            ]
+        })
         res.status(200).json(updatedStudent)
     } catch (err) {
         res.status(400).send({

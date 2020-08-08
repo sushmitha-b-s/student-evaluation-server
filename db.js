@@ -3,7 +3,7 @@ const databaseUrl = process.env.DATABASE_URL
 const db = new Sequelize(databaseUrl)
 
 db
-    .sync()
+    .sync({ force: true })
     .then(() => console.log('Database connected'))
     .catch(err => console.log(err))
 
