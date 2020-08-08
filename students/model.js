@@ -19,7 +19,7 @@ const Students = db.define('student', {
         required: true
     },
     phone: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
         allowNull: false,
         required: true
     },
