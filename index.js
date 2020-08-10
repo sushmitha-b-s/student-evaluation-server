@@ -109,8 +109,8 @@ db
             { colorcode: 'red', date: new Date("2020-01-06"), remarks: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel placeat expedita sint! Cupiditate quidem vitae porro, dignissimos neque expedita recusandae.', studentId: 1 },
             { colorcode: 'green', date: new Date("2020-01-11"), remarks: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel placeat expedita sint! Cupiditate quidem vitae porro, dignissimos neque expedita recusandae.', studentId: 4 },
             { colorcode: 'red', date: new Date("2020-01-12"), remarks: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel placeat expedita sint! Cupiditate quidem vitae porro, dignissimos neque expedita recusandae.', studentId: 7 },
-            { colorcode: 'green', date: new Date("2020-01-13"), remarks: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel placeat expedita sint! Cupiditate quidem vitae porro, dignissimos neque expedita recusandae.', studentId: 7 },
-            { colorcode: 'yellow', date: new Date("2020-01-14"), remarks: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel placeat expedita sint! Cupiditate quidem vitae porro, dignissimos neque expedita recusandae.', studentId: 7 },
+            { colorcode: 'green', date: new Date("2020-01-13"), remarks: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel placeat expedita sint! Cupiditate quidem vitae porro, dignissimos neque expedita recusandae.', studentId: 14 },
+            { colorcode: 'yellow', date: new Date("2020-01-14"), remarks: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel placeat expedita sint! Cupiditate quidem vitae porro, dignissimos neque expedita recusandae.', studentId: 12 },
         ]
 
         const evaluationPromises = evaluations.map(evaluation => Evaluation.create(evaluation))

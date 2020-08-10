@@ -165,15 +165,42 @@ router.get('/progressbar/:classId', auth, async (req, res) => {
             ]
         })
 
-        const total = students.length //total students in thai class
-        const studentsWithRed = students.filter(student => student.evaluations[0].colorcode === 'red').length
-        const studentsWithYellow = students.filter(student => student.evaluations[0].colorcode === 'yellow').length
-        const studentsWithGreen = students.filter(student => student.evaluations[0].colorcode === 'green').length
+
+        let none = 0
+        let total = 0
+        let redCount = 0
+        let yellowCount = 0
+        let greenCount = 0
+
+        students.map(student => {
+            if (student.evaluations.length === 0) {
+                none++
+            } else {
+                const color = student.evaluations[0].colorcode
+
+                if (color === 'red') {
+                    redCount++
+                    total++
+                }
+
+                if (color === 'yellow') {
+                    yellowCount++
+                    total++
+                }
+
+                if (color === 'green') {
+                    greenCount++
+                    total++
+                }
+            }
+        })
 
         res.status(200).send({
-            redPercentage: ((studentsWithRed / total) * 100).toFixed(2),
-            yellowPercentage: ((studentsWithYellow / total) * 100).toFixed(2),
-            greenPercentage: ((studentsWithGreen / total) * 100).toFixed(2)
+            redPercentage: ((redCount / total) * 100).toFixed(2),
+            yellowPercentage: ((yellowCount / total) * 100).toFixed(2),
+            greenPercentage: ((greenCount / total) * 100).toFixed(2),
+            total,
+            none
         })
     } catch (err) {
         res.status(400).send({
