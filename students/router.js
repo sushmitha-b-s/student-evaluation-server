@@ -234,8 +234,11 @@ router.get('/algorithm/:classId', auth, async (req, res) => {
             ]
         })
 
+        let randomColor // picks 'red', 'yellow' or 'green' based on the random number generated.
+        let randomNumberForStudent  //random number to pick a student from an array of students who has the same color evaluated.
+        let randomStudent// picks a student from an array of possible items using 'randomNumberForStudent' as an index.
+
         const randomNumber = parseFloat((Math.random() * 100).toFixed(2))
-        let randomColor
 
         if (randomNumber >= 50) {
             randomColor = 'red'
@@ -245,10 +248,22 @@ router.get('/algorithm/:classId', auth, async (req, res) => {
             randomColor = 'green'
         }
 
-        const randomStudent = students.find(stud => stud.evaluations.find(eval => eval.colorcode === randomColor))
+        //If random color is red,
+
+        // Below line gives us an array of all students in that class who got the latest evaluation as red.
+        const randomStudents = students.filter(stud => stud.evaluations[0].colorcode === randomColor)
+
+        //If there are any students who got red in that class, picks any one of them randomly.
+        // If none of the students got red as their latest colorcode, then picks any one of them in that class.
+        if (randomStudents.length) {
+            randomNumberForStudent = parseInt(Math.random() * randomStudents.length)
+            randomStudent = randomStudents[randomNumberForStudent]
+        } else {
+            randomNumberForStudent = parseInt(Math.random() * students.length)
+            randomStudent = students[randomNumberForStudent]
+        }
 
         res.json({
-            randomNumber,
             randomStudent
         })
     } catch (err) {
