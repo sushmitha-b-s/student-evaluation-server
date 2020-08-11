@@ -5,14 +5,20 @@ const Students = require('../students/model')
 const Evaluation = db.define('evaluation', {
     colorcode: {
         type: Sequelize.ENUM,
-        values: ['red', 'yellow', 'green']
+        values: ['red', 'yellow', 'green'],
+        allowNull: false,
+        required: true
     },
     date: {
         type: Sequelize.DATEONLY,
-        defaultValue: Sequelize.NOW
+        defaultValue: Sequelize.NOW,
+        allowNull: false,
+        required: true
     },
     remarks: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
+        allowNull: false,
+        required: true
     }
 
 })

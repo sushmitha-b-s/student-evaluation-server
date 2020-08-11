@@ -19,7 +19,17 @@ router.post('/classes/:classId/students', auth, async (req, res) => {
             classId: req.params.classId
         })
 
-        res.status(201).json(newStudent)
+        const updatedStudent = await Students.findByPk(newStudent.id, {
+            include: [
+                {
+                    model: Evaluation,
+                    limit: 1,
+                    order: [['date', 'DESC']]
+                }
+            ]
+        })
+
+        res.status(201).json(updatedStudent)
     } catch (err) {
         res.status(400).send({
             message: err
@@ -91,7 +101,17 @@ router.put('/students/:studentId', auth, async (req, res) => {
     })
 
     try {
-        const updatedStudent = await existingStudent.update(req.body)
+        const updateStudent = await existingStudent.update(req.body)
+
+        const updatedStudent = await Students.findByPk(updateStudent.id, {
+            include: [
+                {
+                    model: Evaluation,
+                    limit: 1,
+                    order: [['date', 'DESC']]
+                }
+            ]
+        })
         res.status(200).json(updatedStudent)
     } catch (err) {
         res.status(400).send({
@@ -145,15 +165,42 @@ router.get('/progressbar/:classId', auth, async (req, res) => {
             ]
         })
 
-        const total = students.length //total students in thai class
-        const studentsWithRed = students.filter(student => student.evaluations[0].colorcode === 'red').length
-        const studentsWithYellow = students.filter(student => student.evaluations[0].colorcode === 'yellow').length
-        const studentsWithGreen = students.filter(student => student.evaluations[0].colorcode === 'green').length
+
+        let none = 0
+        let total = 0
+        let redCount = 0
+        let yellowCount = 0
+        let greenCount = 0
+
+        students.map(student => {
+            if (student.evaluations.length === 0) {
+                none++
+            } else {
+                const color = student.evaluations[0].colorcode
+
+                if (color === 'red') {
+                    redCount++
+                    total++
+                }
+
+                if (color === 'yellow') {
+                    yellowCount++
+                    total++
+                }
+
+                if (color === 'green') {
+                    greenCount++
+                    total++
+                }
+            }
+        })
 
         res.status(200).send({
-            redPercentage: ((studentsWithRed / total) * 100).toFixed(2),
-            yellowPercentage: ((studentsWithYellow / total) * 100).toFixed(2),
-            greenPercentage: ((studentsWithGreen / total) * 100).toFixed(2)
+            redPercentage: ((redCount / total) * 100).toFixed(2),
+            yellowPercentage: ((yellowCount / total) * 100).toFixed(2),
+            greenPercentage: ((greenCount / total) * 100).toFixed(2),
+            total,
+            none
         })
     } catch (err) {
         res.status(400).send({
@@ -167,7 +214,7 @@ router.get('/progressbar/:classId', auth, async (req, res) => {
 //33% time - picks student who got 'yellow' as their latest colorcode.
 //17% time - picks student who got 'green' as their latest colorcode.
 
-router.get('/algorithm/:classId', auth, async (req, res) => {
+router.get('/askquestion/:classId', auth, async (req, res) => {
     const existingClass = await Class.findByPk(req.params.classId)
     if (!existingClass) return res.status(400).send({
         message: 'The class is not found'
@@ -187,8 +234,11 @@ router.get('/algorithm/:classId', auth, async (req, res) => {
             ]
         })
 
+        let randomColor // picks 'red', 'yellow' or 'green' based on the random number generated.
+        let randomNumberForStudent  //random number to pick a student from an array of students who has the same color evaluated.
+        let randomStudent// picks a student from an array of possible items using 'randomNumberForStudent' as an index.
+
         const randomNumber = parseFloat((Math.random() * 100).toFixed(2))
-        let randomColor
 
         if (randomNumber >= 50) {
             randomColor = 'red'
@@ -198,10 +248,22 @@ router.get('/algorithm/:classId', auth, async (req, res) => {
             randomColor = 'green'
         }
 
-        const randomStudent = students.find(stud => stud.evaluations.find(eval => eval.colorcode === randomColor))
+        //If random color is red,
+
+        // Below line gives us an array of all students in that class who got the latest evaluation as red.
+        const randomStudents = students.filter(stud => stud.evaluations[0].colorcode === randomColor)
+
+        //If there are any students who got red in that class, picks any one of them randomly.
+        // If none of the students got red as their latest colorcode, then picks any one of them in that class.
+        if (randomStudents.length) {
+            randomNumberForStudent = parseInt(Math.random() * randomStudents.length)
+            randomStudent = randomStudents[randomNumberForStudent]
+        } else {
+            randomNumberForStudent = parseInt(Math.random() * students.length)
+            randomStudent = students[randomNumberForStudent]
+        }
 
         res.json({
-            randomNumber,
             randomStudent
         })
     } catch (err) {

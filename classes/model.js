@@ -8,12 +8,14 @@ const Classes = db.define('class', {
         required: true
     },
     startDate: {
-        type: Sequelize.STRING, //DD-MM-YYYY
+        type: Sequelize.DATEONLY,
+        defaultValue: Sequelize.NOW,
         allowNull: false,
         required: true
     },
     endDate: {
-        type: Sequelize.STRING, //DD-MM-YYYY
+        type: Sequelize.DATEONLY,
+        defaultValue: Sequelize.NOW,
         allowNull: false,
         required: true
     }
