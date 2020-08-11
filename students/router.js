@@ -214,7 +214,7 @@ router.get('/progressbar/:classId', auth, async (req, res) => {
 //33% time - picks student who got 'yellow' as their latest colorcode.
 //17% time - picks student who got 'green' as their latest colorcode.
 
-router.get('/algorithm/:classId', auth, async (req, res) => {
+router.get('/askquestion/:classId', auth, async (req, res) => {
     const existingClass = await Class.findByPk(req.params.classId)
     if (!existingClass) return res.status(400).send({
         message: 'The class is not found'
