@@ -10,7 +10,11 @@ router.post('/classes', auth, async (req, res) => {
     try {
         const newClass = await Classes.create(req.body)
 
-        res.status(201).json(newClass)
+        const updatedClass = await Classes.findByPk(newClass.id, {
+            include: [Student]
+        })
+
+        res.status(201).json(updatedClass)
     } catch (err) {
         res.status(400).send({
             message: err
@@ -22,6 +26,7 @@ router.post('/classes', auth, async (req, res) => {
 router.get('/classes', auth, async (req, res) => {
     try {
         const classes = await Classes.findAll({
+            order: [['createdAt', 'ASC']],
             include: [Student]
         })
 

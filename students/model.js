@@ -13,6 +13,16 @@ const Students = db.define('student', {
         allowNull: false,
         required: true
     },
+    email: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+        required: true
+    },
+    phone: {
+        type: Sequelize.BIGINT,
+        allowNull: false,
+        required: true
+    },
     address: {
         type: Sequelize.TEXT,
         allowNull: false,
@@ -33,7 +43,7 @@ const Students = db.define('student', {
         allowNull: false,
         required: true
     }
-}, { timestamps: false })
+})
 
 Students.belongsTo(Class, { onDelete: 'cascade' })
 Class.hasMany(Students, { onDelete: 'cascade' })
