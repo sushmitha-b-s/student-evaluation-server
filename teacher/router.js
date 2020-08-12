@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 
 router.post('/register', async (req, res) => {
     const { error } = await registerValidation(req.body)
-    if (error) return res.status(400).send({ message: error.details[0].message })
+    if (error) return res.status(400).send({ error: error.details[0].message })
 
     const emailExists = await Teacher.findOne({
         where: {
@@ -16,7 +16,7 @@ router.post('/register', async (req, res) => {
         }
     })
 
-    if (emailExists) return res.status(400).send('The email already exists')
+    if (emailExists) return res.status(400).json({ error: 'The email already exists.' })
 
     const salt = await bcrypt.genSaltSync(10);
     const hashedPassword = await bcrypt.hashSync(req.body.password, salt);
@@ -32,7 +32,7 @@ router.post('/register', async (req, res) => {
         res.status(201).send(newTeacher)
     } catch (err) {
         res.status(400).send({
-            message: err
+            error: err
         })
     }
 
@@ -40,7 +40,7 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     const { error } = await loginValidation(req.body)
-    if (error) return res.status(400).send({ message: error.details[0].message })
+    if (error) return res.status(400).send({ error: error.details[0].message })
 
     const teacher = await Teacher.findOne({
         where: {
@@ -48,11 +48,11 @@ router.post('/login', async (req, res) => {
         }
     })
 
-    if (!teacher) return res.status(400).send({ message: 'Invalid email' })
+    if (!teacher) return res.status(400).send({ error: 'Invalid email or password.' })
 
     const verifyPassword = await bcrypt.compare(req.body.password, teacher.password)
 
-    if (!verifyPassword) return res.status(400).send({ message: 'Invalid password' })
+    if (!verifyPassword) return res.status(400).send({ error: 'Invalid email or password.' })
 
     try {
         const { id, fullname, email } = teacher
@@ -66,7 +66,7 @@ router.post('/login', async (req, res) => {
         })
     } catch (err) {
         res.status(400).send({
-            message: err
+            error: err
         })
     }
 })
